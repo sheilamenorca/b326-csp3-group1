@@ -1,0 +1,3 @@
+package com.joysistvi.CyberAccess.controller;
+import com.joysistvi.CyberAccess.model.FoodCat; import com.joysistvi.CyberAccess.service.FoodCatServiceImpl; import java.sql.SQLException; import java.util.List;
+public class FoodCatController {private final FoodCatServiceImpl service;public FoodCatController(){this(new FoodCatServiceImpl());}public FoodCatController(FoodCatServiceImpl s){service=s;}public List<FoodCat> getAll()throws SQLException{return service.getAll();}public FoodCat getById(int id)throws SQLException{return service.getById(id);}public void add(FoodCat x)throws SQLException{service.add(x);}public boolean update(FoodCat x)throws SQLException{return service.update(x);}public boolean delete(int id)throws SQLException{return service.delete(id);}}

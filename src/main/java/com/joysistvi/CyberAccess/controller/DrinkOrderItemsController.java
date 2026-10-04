@@ -1,0 +1,3 @@
+package com.joysistvi.CyberAccess.controller;
+import com.joysistvi.CyberAccess.model.DrinkOrderItems; import com.joysistvi.CyberAccess.service.DrinkOrderItemsService; import java.util.List;
+public class DrinkOrderItemsController {private final DrinkOrderItemsService service;public DrinkOrderItemsController(){this(new com.joysistvi.CyberAccess.service.DrinkOrderItemsServiceImpl());}public DrinkOrderItemsController(DrinkOrderItemsService s){service=s;}public List<DrinkOrderItems> getAll(){return service.getAll();}public List<DrinkOrderItems> getByOrderId(int id){return service.getByOrderId(id);}public boolean add(DrinkOrderItems x){return service.add(x);}public boolean delete(int id){return service.delete(id);}}

@@ -1,0 +1,14 @@
+package com.joysistvi.CyberAccess.repo;
+import com.joysistvi.CyberAccess.config.DatabaseConnection; import com.joysistvi.CyberAccess.model.Order; import java.sql.*; import java.util.*;
+public class OrderRepoImpl implements OrderRepo {
+ private final DatabaseConnection db; public OrderRepoImpl(){this(new DatabaseConnection());} public OrderRepoImpl(DatabaseConnection db){this.db=db;}
+ private Order map(ResultSet r)throws SQLException{int tx=r.getInt("transaction_id");Integer t=r.wasNull()?null:tx;return new Order(r.getInt("order_id"),t,r.getInt("user_id"),r.getBigDecimal("amount"),r.getString("status"));}
+ private List<Order> list(String q,Integer id)throws SQLException{List<Order>a=new ArrayList<>();try(Connection c=db.connect();PreparedStatement s=c.prepareStatement(q)){if(id!=null)s.setInt(1,id);try(ResultSet r=s.executeQuery()){while(r.next())a.add(map(r));}}return a;}
+ public List<Order> findAll()throws SQLException{return list("SELECT order_id,transaction_id,user_id,amount,status FROM orders ORDER BY order_id DESC",null);}
+ public List<Order> findByUser(int id)throws SQLException{return list("SELECT order_id,transaction_id,user_id,amount,status FROM orders WHERE user_id=? ORDER BY order_id DESC",id);}
+ public Optional<Order> findById(int id)throws SQLException{try(Connection c=db.connect();PreparedStatement s=c.prepareStatement("SELECT order_id,transaction_id,user_id,amount,status FROM orders WHERE order_id=?")){s.setInt(1,id);try(ResultSet r=s.executeQuery()){return r.next()?Optional.of(map(r)):Optional.empty();}}}
+ public void save(Order x)throws SQLException{try(Connection c=db.connect();PreparedStatement s=c.prepareStatement("INSERT INTO orders(transaction_id,user_id,amount,status) VALUES(?,?,?,?)",Statement.RETURN_GENERATED_KEYS)){if(x.getTransactionId()==null)s.setNull(1,Types.INTEGER);else s.setInt(1,x.getTransactionId());s.setInt(2,x.getUserId());s.setBigDecimal(3,x.getAmount());s.setString(4,x.getStatus());s.executeUpdate();try(ResultSet k=s.getGeneratedKeys()){if(k.next())x.setOrderId(k.getInt(1));}}}
+ public boolean update(Order x)throws SQLException{try(Connection c=db.connect();PreparedStatement s=c.prepareStatement("UPDATE orders SET transaction_id=?,user_id=?,amount=?,status=? WHERE order_id=?")){if(x.getTransactionId()==null)s.setNull(1,Types.INTEGER);else s.setInt(1,x.getTransactionId());s.setInt(2,x.getUserId());s.setBigDecimal(3,x.getAmount());s.setString(4,x.getStatus());s.setInt(5,x.getOrderId());return s.executeUpdate()>0;}}
+ public boolean setStatus(int id,String status)throws SQLException{try(Connection c=db.connect();PreparedStatement s=c.prepareStatement("UPDATE orders SET status=? WHERE order_id=?")){s.setString(1,status);s.setInt(2,id);return s.executeUpdate()>0;}}
+ public boolean delete(int id)throws SQLException{try(Connection c=db.connect();PreparedStatement s=c.prepareStatement("DELETE FROM orders WHERE order_id=?")){s.setInt(1,id);return s.executeUpdate()>0;}}
+}

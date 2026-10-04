@@ -1,0 +1,3 @@
+package com.joysistvi.CyberAccess.controller;
+import com.joysistvi.CyberAccess.model.Food; import com.joysistvi.CyberAccess.model.FoodCat; import com.joysistvi.CyberAccess.service.FoodServiceImpl; import com.joysistvi.CyberAccess.service.FoodCatServiceImpl; import java.sql.SQLException;
+public class FoodMenuController {public final FoodController food; public final FoodCatController categories; public FoodMenuController(){food=new FoodController(new FoodServiceImpl());categories=new FoodCatController(new FoodCatServiceImpl());} public java.util.List<Food> foods()throws SQLException{return food.getAll();} public java.util.List<FoodCat> categories()throws SQLException{return categories.getAll();}}
